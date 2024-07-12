@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Button, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Button, FlatList, ScrollView, StyleSheet, View } from "react-native";
 import NumberContainer from "../components/NumberContainer";
 import Card from "../components/Card";
 import MainButton from "../components/MainButton";
@@ -13,10 +13,10 @@ const generateRandomNumber = (min, max, exclude) => {
   return rndNum;
 };
 
-const renderListItem = (value, numRound) => (
-  <View key={value} style={styles.listItem}>
-    <BodyText>#{numRound}</BodyText>
-    <BodyText>{value}</BodyText>
+const renderListItem = (listLength, itemData) => (
+  <View style={styles.listItem}>
+    <BodyText>#{listLength - itemData.index}</BodyText>
+    <BodyText>{itemData.item}</BodyText>
   </View>
 );
 const GameScreen = (props) => {
@@ -68,12 +68,18 @@ const GameScreen = (props) => {
           <Ionicons name="md-add" size={24} color="white" />
         </MainButton>
       </Card>
-      <View style={styles.list}>
-        <ScrollView>
+      <View style={styles.listContainer}>
+        {/* <ScrollView contentContainerStyle={styles.list}>
           {pastGuesses.map((guess, index) =>
             renderListItem(guess, index + pastGuesses.length - 1)
           )}
-        </ScrollView>
+        </ScrollView> */}
+        <FlatList
+        keyExtractor={item=>item}
+        data={pastGuesses}
+        renderItem={renderListItem.bind(this, pastGuesses.length)}
+        contentContainerStyle={styles.list}
+        />
       </View>
     </View>
   );
@@ -92,9 +98,9 @@ const styles = StyleSheet.create({
     width: 400,
     maxWidth: "90%",
   },
-  list: {
+  listContainer: {
     flex: 1,
-    width: "80%",
+    width: "60%",
   },
   listItem: {
     borderColor: "#ccc",
@@ -103,8 +109,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: "white",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    width: '100%'
   },
+  list: {
+    // alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'flex-end'
+  }
 });
 
 export default GameScreen;
